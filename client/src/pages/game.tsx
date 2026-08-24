@@ -48,6 +48,7 @@ export default function Game() {
         <h1 className="tg-topic" style={{ marginBottom: ".5rem" }}>{FRAMING.intro}</h1>
         <p className="tg-standing" style={{ marginBottom: "1rem" }}>{FRAMING.question}</p>
         <SortStage card={nextCard} sorted={gameState.assignments.length} total={gameState.totalCards}
+          assignments={gameState.assignments}
           onAssign={(g: Group) => nextCard && room.assign(nextCard.id, g)} />
       </>
     );

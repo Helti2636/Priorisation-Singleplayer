@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { useRoute } from "wouter";
 import { useRoom } from "@/lib/useRoom";
 import { RoomBar, OverviewBoard } from "@/components/game-parts";
@@ -16,7 +16,6 @@ export default function Facilitator() {
   const roomCode = params?.roomCode ?? "";
   const room = useRoom(roomCode, "facilitator");
   const { gameState } = room;
-  const [copied, setCopied] = useState(false);
 
   if (!gameState) {
     return (
@@ -46,22 +45,6 @@ export default function Facilitator() {
     return `<p class="k">Prioritization</p><h1>Yes · Maybe · No</h1>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:12px;">${GROUPS.map(col).join("")}</div>
       <p class="foot">Saved ${esc(new Date().toLocaleString())}</p>`;
-  };
-
-  const copyText = () =>
-    GROUPS.map((g) => {
-      const items = cardsIn(g).map((a) => `  - ${nameOf(a.cardId)}`).join("\n") || "  —";
-      return `${GROUP_LABEL[g]}:\n${items}`;
-    }).join("\n\n");
-
-  const copyOverview = async () => {
-    try {
-      await navigator.clipboard.writeText(copyText());
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    } catch {
-      /* clipboard blocked — ignore */
-    }
   };
 
   const shell = (children: ReactNode) => (
@@ -117,9 +100,9 @@ export default function Facilitator() {
       <h1 className="tg-topic" style={{ marginBottom: "1.2rem" }}>Yes · Maybe · No</h1>
       <OverviewBoard assignments={gameState.assignments} onMove={() => {}} readOnly />
       <div className="tg-controls" style={{ marginTop: "1.6rem" }}><div className="buttons">
-        <button className="tg-btn" onClick={copyOverview}>{copied ? "Copied ✓" : "Copy"}</button>
-        <button className="tg-btn ghost" onClick={() => printHtml("Prioritization", overviewDoc())}>Save as PDF</button>
+        <button className="tg-btn" onClick={() => printHtml("Prioritization", overviewDoc())}>Save as PDF</button>
         <button className="tg-btn ghost" onClick={room.restart}>Run it again</button>
+        <button className="tg-btn ghost" onClick={room.leave}>End session</button>
       </div></div>
     </>
   );
